@@ -25,12 +25,4 @@ public class MemoText {
 
     @Column(name = "content")
     private String content;
-
-    public boolean is_do() {
-        return _do;
-    }
-
-    public void set_do(boolean aDo) {
-        this._do = aDo;
-    }
 }

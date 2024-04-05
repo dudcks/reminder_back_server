@@ -57,7 +57,7 @@ public class MemoService {
                 memoTextDTO.setMemoTextId(memoText.getMemoTextId());
                 memoTextDTO.setMemoId(memoText.getMemo().getMemoId());
                 memoTextDTO.setContent(memoText.getContent());
-                memoTextDTO.set_do(memoText.is_do());
+                memoTextDTO.set_do(memoText.get_do());
                 memoTextDTOs.add(memoTextDTO);
             }
         }

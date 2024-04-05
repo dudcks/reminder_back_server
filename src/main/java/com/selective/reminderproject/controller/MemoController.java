@@ -59,7 +59,7 @@ public class MemoController {
                     MemoText memoText = MemoText.builder()
                             .memo(savedMemo)
                             .content(memoTextDTO.getContent())
-                            ._do(memoTextDTO.is_do())
+                            ._do(memoTextDTO.get_do())
                             .build();
                     memoTextService.save(memoText); // MemoText를 저장하는 서비스 메소드 호출
                 }
@@ -83,7 +83,7 @@ public class MemoController {
         }
     }
 
-    @GetMapping("/memo")
+    @GetMapping("/memo/today")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getTodayMemo(@RequestParam(name="year") int year ) {
         Optional<String> usernameOptional = SecurityUtil.getCurrentUsername();
