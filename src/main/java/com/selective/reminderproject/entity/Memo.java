@@ -26,23 +26,14 @@ public class Memo {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id",nullable = false)
     private User user;
 
-    @Column(name = "createyear")
+    @Column(name = "create_year")
     private short createyear;
 
-    @Column(name = "createmonth")
+    @Column(name = "create_month")
     private short createmonth;
 
-    @Column(name = "createday")
+    @Column(name = "create_day")
     private short createday;
-
-    @Column(name ="createhour")
-    private short createhour;
-
-    @Column(name = "createminute")
-    private short createminute;
-
-    @Column(name = "createweek")
-    private String createweek;
 
     @Column(name = "title")
     private String title;
@@ -56,4 +47,5 @@ public class Memo {
     public List<MemoText> getMemoTexts() {
         return this.memotext;
     }
+
 }

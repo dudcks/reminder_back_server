@@ -25,4 +25,10 @@ public class MemoText {
 
     @Column(name = "content")
     private String content;
+
+    @Column(name ="alarm_hour")
+    private short alarm_hour;
+
+    @Column(name ="alarm_minute")
+    private short alarm_minute;
 }

@@ -10,10 +10,12 @@ import com.selective.reminderproject.service.MemoTextService;
 import com.selective.reminderproject.service.UserService;
 import com.selective.reminderproject.util.SecurityUtil;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,9 +45,6 @@ public class MemoController {
                     .createyear(memoDTO.getCreateyear())
                     .createmonth(memoDTO.getCreatemonth())
                     .createday(memoDTO.getCreateday())
-                    .createhour(memoDTO.getCreatehour())
-                    .createminute(memoDTO.getCreateminute())
-                    .createweek(memoDTO.getCreateweek())
                     .title(memoDTO.getTitle())
                     .feeling(memoDTO.getFeeling())
                     .build();
@@ -60,6 +59,8 @@ public class MemoController {
                             .memo(savedMemo)
                             .content(memoTextDTO.getContent())
                             ._do(memoTextDTO.get_do())
+                            .alarm_hour(memoTextDTO.getAlarm_hour())
+                            .alarm_minute(memoTextDTO.getAlarm_minute())
                             .build();
                     memoTextService.save(memoText); // MemoText를 저장하는 서비스 메소드 호출
                 }
@@ -85,12 +86,19 @@ public class MemoController {
 
     @GetMapping("/memo/today")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public ResponseEntity<?> getTodayMemo(@RequestParam(name="year") int year ) {
+    public ResponseEntity<?> getTodayMemo() {
+        LocalDate today = LocalDate.now();
+
+        short year = (short) today.getYear();
+        short month = (short) today.getMonthValue();
+        short day = (short) today.getDayOfMonth();
+
         Optional<String> usernameOptional = SecurityUtil.getCurrentUsername();
         if (usernameOptional.isPresent()) {
             String username = usernameOptional.get();
-            List<MemoDTO> memos = memoService.getAllMemosByUsername(username);
-            return ResponseEntity.ok(memos);
+            //List<MemoDTO> memos = memoService.getAllMemosByUsername(username);
+            MemoDTO todayMemos = memoService.getTodayMemosByUsernameAndDate(username, year, month, day);
+            return ResponseEntity.ok(todayMemos);
         } else {
             return ResponseEntity.badRequest().body("User not found");
         }
@@ -100,11 +108,16 @@ public class MemoController {
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<String> deleteMemo(@PathVariable Long memoId) {
         Optional<Memo> memoOptional = memoService.findMemoById(memoId);
-
-        if (memoOptional.isPresent()) {
-            // Delete the memo and its associated memo texts
-            memoService.deleteMemoAndTexts(memoId);
-            return ResponseEntity.ok("Memo and associated texts deleted successfully");
+        Optional<String> usernameOptional = SecurityUtil.getCurrentUsername();
+        if (memoOptional.isPresent()&&usernameOptional.isPresent()) {
+            Memo memo = memoOptional.get();
+            String username = usernameOptional.get();
+            if (memo.getUser().getUsername().equals(username)) {
+                memoService.deleteMemoAndTexts(memoId);
+                return ResponseEntity.ok("Memo and associated texts deleted successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this memo");
+            }
         } else {
             return ResponseEntity.notFound().build();
         }

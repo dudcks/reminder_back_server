@@ -9,4 +9,6 @@ public class MemoTextDTO {
     private Long memoId;
     private Boolean _do;
     private String content;
+    private short alarm_hour;
+    private short alarm_minute;
 }

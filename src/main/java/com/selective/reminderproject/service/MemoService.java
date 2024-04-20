@@ -6,8 +6,8 @@ import com.selective.reminderproject.entity.Memo;
 import com.selective.reminderproject.entity.MemoText;
 import com.selective.reminderproject.repository.MemoRepository;
 import com.selective.reminderproject.repository.MemoTextRepository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,25 +43,13 @@ public class MemoService {
         memoDTO.setCreateyear(memo.getCreateyear());
         memoDTO.setCreatemonth(memo.getCreatemonth());
         memoDTO.setCreateday(memo.getCreateday());
-        memoDTO.setCreatehour(memo.getCreatehour());
-        memoDTO.setCreateminute(memo.getCreateminute());
-        memoDTO.setCreateweek(memo.getCreateweek());
         memoDTO.setTitle(memo.getTitle());
         memoDTO.setFeeling(memo.getFeeling());
 
         // MemoTextDTO로 변환
-        List<MemoTextDTO> memoTextDTOs = new ArrayList<>();
-        if (memo.getMemoTexts() != null) {
-            for (MemoText memoText : memo.getMemoTexts()) {
-                MemoTextDTO memoTextDTO = new MemoTextDTO();
-                memoTextDTO.setMemoTextId(memoText.getMemoTextId());
-                memoTextDTO.setMemoId(memoText.getMemo().getMemoId());
-                memoTextDTO.setContent(memoText.getContent());
-                memoTextDTO.set_do(memoText.get_do());
-                memoTextDTOs.add(memoTextDTO);
-            }
-        }
+        List<MemoTextDTO> memoTextDTOs = getMemoTextDTOS(memo);
         memoDTO.setMemoTexts(memoTextDTOs);
+
         return memoDTO;
     }
 
@@ -77,5 +65,39 @@ public class MemoService {
             Memo memo = memoOptional.get();
             memoRepository.delete(memo);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public MemoDTO getTodayMemosByUsernameAndDate(String username, short yaer, short month, short day){
+        Memo todaymemo = memoRepository.findTodayMemosByUsernameAndDate(username,yaer,month,day);
+
+        List<MemoTextDTO> memoTextDTOs = getMemoTextDTOS(todaymemo);
+
+        return MemoDTO.builder()
+                .memoId(todaymemo.getMemoId())
+                .createyear(todaymemo.getCreateyear())
+                .createmonth(todaymemo.getCreatemonth())
+                .createday(todaymemo.getCreateday())
+                .title(todaymemo.getTitle())
+                .feeling(todaymemo.getFeeling())
+                .memoTexts(memoTextDTOs)
+                .build();
+    }
+
+    private static List<MemoTextDTO> getMemoTextDTOS(Memo memo) {
+        List<MemoTextDTO> memoTextDTOs = new ArrayList<>();
+        if (memo.getMemoTexts() != null) {
+            for (MemoText memoText : memo.getMemoTexts()) {
+                MemoTextDTO memoTextDTO = new MemoTextDTO();
+                memoTextDTO.setMemoTextId(memoText.getMemoTextId());
+                memoTextDTO.setMemoId(memoText.getMemo().getMemoId());
+                memoTextDTO.setContent(memoText.getContent());
+                memoTextDTO.set_do(memoText.get_do());
+                memoTextDTO.setAlarm_hour(memoText.getAlarm_hour());
+                memoTextDTO.setAlarm_minute(memoText.getAlarm_minute());
+                memoTextDTOs.add(memoTextDTO);
+            }
+        }
+        return memoTextDTOs;
     }
 }
