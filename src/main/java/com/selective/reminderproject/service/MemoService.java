@@ -71,17 +71,22 @@ public class MemoService {
     public MemoDTO getTodayMemosByUsernameAndDate(String username, short yaer, short month, short day){
         Memo todaymemo = memoRepository.findTodayMemosByUsernameAndDate(username,yaer,month,day);
 
-        List<MemoTextDTO> memoTextDTOs = getMemoTextDTOS(todaymemo);
+        try {
+            List<MemoTextDTO> memoTextDTOs = getMemoTextDTOS(todaymemo);
 
-        return MemoDTO.builder()
-                .memoId(todaymemo.getMemoId())
-                .createyear(todaymemo.getCreateyear())
-                .createmonth(todaymemo.getCreatemonth())
-                .createday(todaymemo.getCreateday())
-                .title(todaymemo.getTitle())
-                .feeling(todaymemo.getFeeling())
-                .memoTexts(memoTextDTOs)
-                .build();
+            return MemoDTO.builder()
+                    .memoId(todaymemo.getMemoId())
+                    .createyear(todaymemo.getCreateyear())
+                    .createmonth(todaymemo.getCreatemonth())
+                    .createday(todaymemo.getCreateday())
+                    .title(todaymemo.getTitle())
+                    .feeling(todaymemo.getFeeling())
+                    .memoTexts(memoTextDTOs)
+                    .build();
+        }
+        catch(Exception ex){
+            return null;
+        }
     }
 
     private static List<MemoTextDTO> getMemoTextDTOS(Memo memo) {

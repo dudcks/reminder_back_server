@@ -38,7 +38,60 @@ public class MemoController {
         Optional<String> username = SecurityUtil.getCurrentUsername();
         Optional<User> userOptional = userService.findUserByUsername(username);
 
-        if (userOptional.isPresent()) {
+        //오늘날짜의 메모가 있다면 insert가 아니라 update하는 코드 추가필요<<중요>>
+        LocalDate today = LocalDate.now();
+
+        short year = (short) today.getYear();
+        short month = (short) today.getMonthValue();
+        short day = (short) today.getDayOfMonth();
+
+        if (userOptional.isPresent() && username.isPresent()) {
+            User user = userOptional.get();
+            String uname = username.get();
+            MemoDTO todayMemos = memoService.getTodayMemosByUsernameAndDate(uname, year, month, day);
+            if(todayMemos!=null){
+
+                memoDTO.setMemoId(todayMemos.getMemoId());
+
+                Memo memo = Memo.builder()
+                        .memoId(memoDTO.getMemoId())
+                        .user(user)
+                        .createyear(memoDTO.getCreateyear())
+                        .createmonth(memoDTO.getCreatemonth())
+                        .createday(memoDTO.getCreateday())
+                        .title(memoDTO.getTitle())
+                        .feeling(memoDTO.getFeeling())
+                        .build();
+
+                Memo savedMemo = memoService.save(memo);
+
+                List<MemoTextDTO> memoTextDTOs = todayMemos.getMemoTexts();
+                if (memoTextDTOs != null) {
+                    for (MemoTextDTO memoTextDTO : memoTextDTOs) {
+                        memoTextService.deleteMemoTextById(memoTextDTO.getMemoTextId());// MemoText를 저장하는 서비스 메소드 호출
+                    }
+                }
+
+                List<MemoTextDTO> memoTextDTOs2 = memoDTO.getMemoTexts();
+                if (memoTextDTOs2 != null) {
+                    for (MemoTextDTO memoTextDTO2 : memoTextDTOs2) {
+                        MemoText memoText = MemoText.builder()
+                                .memo(savedMemo)
+                                .content(memoTextDTO2.getContent())
+                                ._do(memoTextDTO2.get_do())
+                                .alarm_hour(memoTextDTO2.getAlarm_hour())
+                                .alarm_minute(memoTextDTO2.getAlarm_minute())
+                                .build();
+                        memoTextService.save(memoText); // MemoText를 저장하는 서비스 메소드 호출
+                    }
+                }
+
+                return ResponseEntity.ok("오늘 메모 존재,수정");
+            }
+        }
+
+
+        if (userOptional.isPresent()) {//메모 추가부분
             User user = userOptional.get();
             Memo memo = Memo.builder()
                     .user(user)
@@ -98,6 +151,9 @@ public class MemoController {
             String username = usernameOptional.get();
             //List<MemoDTO> memos = memoService.getAllMemosByUsername(username);
             MemoDTO todayMemos = memoService.getTodayMemosByUsernameAndDate(username, year, month, day);
+            if(todayMemos==null){
+                return ResponseEntity.status(400).body("오늘 메모 없음");
+            }
             return ResponseEntity.ok(todayMemos);
         } else {
             return ResponseEntity.badRequest().body("User not found");

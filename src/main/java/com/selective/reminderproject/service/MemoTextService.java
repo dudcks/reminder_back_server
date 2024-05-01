@@ -16,4 +16,8 @@ public class MemoTextService {
     @Transactional
     public MemoText save(MemoText memoText){return memoTextRepository.save(memoText);}
 
+    public void deleteMemoTextById(Long memoTextId) {
+        memoTextRepository.deleteById(memoTextId);
+    }
+
 }
