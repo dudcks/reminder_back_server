@@ -37,6 +37,17 @@ public class MemoService {
                 .collect(Collectors.toList());
     }
 
+    public String getAllMemocontentByUsername(String username) {
+        List<Memo> memos = memoRepository.findByUserUsername(username);
+        StringBuilder all_text= new StringBuilder();
+        int i=0;
+        for(Memo memo: memos) {
+            all_text.append(getMemoText(memo));
+            all_text.append(" ");
+        }
+        return all_text.toString();
+    }
+
     private MemoDTO convertToDto(Memo memo) {
         MemoDTO memoDTO = new MemoDTO();
         memoDTO.setMemoId(memo.getMemoId());
@@ -104,5 +115,16 @@ public class MemoService {
             }
         }
         return memoTextDTOs;
+    }
+
+    private static String getMemoText(Memo memo) {
+        StringBuilder a = new StringBuilder();
+        if (memo.getMemoTexts() != null) {
+            for (MemoText memoText : memo.getMemoTexts()) {
+                a.append(memoText.getContent());
+                a.append(" ");
+            }
+        }
+        return a.toString();
     }
 }

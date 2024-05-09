@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "memo", indexes = {
-        @Index(name = "idx_username", columnList = "username")
+        @Index(name = "idx_user_id", columnList = "user_id")
 })
 @Getter
 @Setter

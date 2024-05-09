@@ -8,6 +8,7 @@ import com.selective.reminderproject.entity.User;
 import com.selective.reminderproject.service.MemoService;
 import com.selective.reminderproject.service.MemoTextService;
 import com.selective.reminderproject.service.UserService;
+import com.selective.reminderproject.util.KeywordAnalyzer;
 import com.selective.reminderproject.util.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -178,4 +180,24 @@ public class MemoController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/user/keyword")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<?> getMyUserkeyword() {
+        Optional<String> usernameOptional = SecurityUtil.getCurrentUsername();
+        if (usernameOptional.isPresent()) {
+            String username = usernameOptional.get();
+            String memos = memoService.getAllMemocontentByUsername(username);
+            System.out.println(memos);
+            Map<String, Integer> keywords =KeywordAnalyzer.kekwords(memos);
+            if(keywords.isEmpty()){
+                return ResponseEntity.ok("no keywords");
+            }
+            return ResponseEntity.ok(keywords);
+        } else {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+    }
+
+
 }
