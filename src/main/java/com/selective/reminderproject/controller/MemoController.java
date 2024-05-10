@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public class MemoController {
     private final MemoService memoService;
     private final MemoTextService memoTextService;
 
-    public MemoController(UserService userService,MemoService memoservice, MemoTextService memoTextService) {
+    public MemoController(UserService userService, MemoService memoservice, MemoTextService memoTextService, KeywordAnalyzer key) {
         this.userService = userService;
         this.memoService = memoservice;
         this.memoTextService = memoTextService;
@@ -188,16 +187,26 @@ public class MemoController {
         if (usernameOptional.isPresent()) {
             String username = usernameOptional.get();
             String memos = memoService.getAllMemocontentByUsername(username);
-            System.out.println(memos);
-            Map<String, Integer> keywords =KeywordAnalyzer.kekwords(memos);
+            //System.out.println(memos);
+            Map<String, Integer> keywords = KeywordAnalyzer.keywords(memos);
+
+            StringBuilder sb = new StringBuilder();
+            for (Map.Entry<String, Integer> entry : keywords.entrySet()) {
+                String key = entry.getKey();
+                Integer value = entry.getValue();
+                sb.append(key).append(": ").append(value).append("\n");
+            }
+            String result = sb.toString();
+            System.out.println(result);
+
             if(keywords.isEmpty()){
-                return ResponseEntity.ok("no keywords");
+                String a = KeywordAnalyzer.keywords_s(memos);
+                //System.out.println(a);
+                return ResponseEntity.ok(a);
             }
             return ResponseEntity.ok(keywords);
         } else {
             return ResponseEntity.badRequest().body("User not found");
         }
     }
-
-
 }
