@@ -198,7 +198,7 @@ public class MemoController {
             }
             String result = sb.toString();
             System.out.println(result);
-            
+
             return ResponseEntity.ok(keywords);
         } else {
             return ResponseEntity.badRequest().body("User not found");

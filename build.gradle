@@ -9,7 +9,6 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 }
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 configurations {
 	compileOnly {
