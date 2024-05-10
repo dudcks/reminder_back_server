@@ -198,12 +198,7 @@ public class MemoController {
             }
             String result = sb.toString();
             System.out.println(result);
-
-            if(keywords.isEmpty()){
-                String a = KeywordAnalyzer.keywords_s(memos);
-                //System.out.println(a);
-                return ResponseEntity.ok(a);
-            }
+            
             return ResponseEntity.ok(keywords);
         } else {
             return ResponseEntity.badRequest().body("User not found");
