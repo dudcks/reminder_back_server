@@ -5,7 +5,9 @@ import kr.co.shineware.nlp.komoran.core.Komoran;
 import kr.co.shineware.nlp.komoran.model.KomoranResult;
 import kr.co.shineware.nlp.komoran.model.Token;
 import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
 
+import java.util.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,7 @@ public class KeywordAnalyzer {
     private static Komoran komoran = null;
 
     public KeywordAnalyzer(){
-        komoran = new Komoran(DEFAULT_MODEL.FULL);
+        komoran = new Komoran(DEFAULT_MODEL.LIGHT);
     }
 
 
@@ -69,6 +71,16 @@ public class KeywordAnalyzer {
         //System.out.println(result);
 
 
+        // Map을 Value 기준으로 내림차순 정렬하고 상위 10개 요소만 추출
+        Map<String, Integer> sortedKeywordCounts = keywordCounts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(10)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        // 정렬된 결과 출력
+        sortedKeywordCounts.forEach((key, value) -> System.out.println(key + ": " + value));
+
+
         return keywordCounts;
     }
 
@@ -119,5 +131,14 @@ public class KeywordAnalyzer {
         }
         String result = sb.toString();
         System.out.println(result);
+
+        // Map을 Value 기준으로 내림차순 정렬하고 상위 10개 요소만 추출
+        Map<String, Integer> sortedKeywordCounts = keywordCounts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(10)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        // 정렬된 결과 출력
+        sortedKeywordCounts.forEach((key, value) -> System.out.println(key + ": " + value));
     }
 }
