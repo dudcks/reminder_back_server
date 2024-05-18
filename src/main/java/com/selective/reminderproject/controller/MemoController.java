@@ -130,7 +130,7 @@ public class MemoController {
         }
     }
 
-    @GetMapping("/memo")
+    @GetMapping("/memo")//모든 메모 받아오는거
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getAllMemosByUser() {
         Optional<String> usernameOptional = SecurityUtil.getCurrentUsername();
@@ -142,6 +142,31 @@ public class MemoController {
             return ResponseEntity.badRequest().body("User not found");
         }
     }
+
+
+
+    @GetMapping("/memo/ordered")//모든 메모 받아오는거
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<?> getMemosByUser(@RequestParam(name = "last", defaultValue = "-1") Long last) {
+        Optional<String> usernameOptional = SecurityUtil.getCurrentUsername();
+        if (usernameOptional.isPresent()) {
+            String username = usernameOptional.get();
+            Optional<User> user = userRepository.findByUsername(usernameOptional);
+            Long Id = 0L;
+            if(user.isPresent()){
+                User a =user.get();
+                Id = a.getUserId();
+            }
+            List<MemoDTO> memos = memoService.getAllMemosByUsername_by_last(Id,last);
+            if(memos.isEmpty()){
+                return ResponseEntity.status(400).body("메모 없음");
+            }
+            return ResponseEntity.ok(memos);
+        } else {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+    }
+
 
     @GetMapping("/memo/today")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")

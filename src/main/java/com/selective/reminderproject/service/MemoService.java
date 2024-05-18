@@ -37,6 +37,18 @@ public class MemoService {
                 .collect(Collectors.toList());
     }
 
+    public List<MemoDTO> getAllMemosByUsername_by_last(Long Id, Long last) {
+        List<Memo> memos=null;
+        if(last<0){
+            memos = memoRepository.findByUserUsername_by_last(Id,2);
+        }
+        else
+            memos = memoRepository.findByUserUsername_by_last(Id,last,2);
+        return memos.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     public String getAllMemocontentByUsername(Long user_id) {
         List<Memo> memos = memoRepository.findByUserUsername_by_num(user_id,100);
         StringBuilder all_text= new StringBuilder();
