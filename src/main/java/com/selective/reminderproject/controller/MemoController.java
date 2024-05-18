@@ -197,7 +197,7 @@ public class MemoController {
                 Id = a.getUserId();
             }
             String memos = memoService.getAllMemocontentByUsername(Id);
-            System.out.println(memos);
+            //System.out.println(memos);
             Map<String, Integer> keywords = KeywordAnalyzer.keywords(memos);
 
             StringBuilder sb = new StringBuilder();
@@ -207,7 +207,7 @@ public class MemoController {
                 sb.append(key).append(": ").append(value).append("\n");
             }
             String result = sb.toString();
-            System.out.println(result);
+            //System.out.println(result);
             if(result.isEmpty()){
                 return ResponseEntity.ok("분석된 키워드가 없습니다.");
             }
