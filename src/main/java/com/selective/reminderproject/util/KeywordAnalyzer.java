@@ -81,7 +81,7 @@ public class KeywordAnalyzer {
         sortedKeywordCounts.forEach((key, value) -> System.out.println(key + ": " + value));
 
 
-        return keywordCounts;
+        return sortedKeywordCounts;
     }
 
     public static void main(String[] args) {

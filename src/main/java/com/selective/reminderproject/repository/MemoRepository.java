@@ -13,6 +13,9 @@ import java.util.Optional;
 public interface MemoRepository extends JpaRepository<Memo,Long> {
     List<Memo> findByUserUsername(String username);
 
+    @Query(value = "SELECT * FROM Memo m WHERE m.user_id = :username LIMIT :count", nativeQuery = true)
+    List<Memo> findByUserUsername_by_num(@Param("username") Long username, @Param("count") int count);
+
     @Override
     Optional<Memo> findById(Long aLong);
 

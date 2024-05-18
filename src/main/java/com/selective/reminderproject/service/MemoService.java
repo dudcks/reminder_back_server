@@ -37,8 +37,8 @@ public class MemoService {
                 .collect(Collectors.toList());
     }
 
-    public String getAllMemocontentByUsername(String username) {
-        List<Memo> memos = memoRepository.findByUserUsername(username);
+    public String getAllMemocontentByUsername(Long user_id) {
+        List<Memo> memos = memoRepository.findByUserUsername_by_num(user_id,100);
         StringBuilder all_text= new StringBuilder();
         int i=0;
         for(Memo memo: memos) {

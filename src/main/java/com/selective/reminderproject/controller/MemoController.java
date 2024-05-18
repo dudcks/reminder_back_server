@@ -5,16 +5,19 @@ import com.selective.reminderproject.dto.MemoTextDTO;
 import com.selective.reminderproject.entity.Memo;
 import com.selective.reminderproject.entity.MemoText;
 import com.selective.reminderproject.entity.User;
+import com.selective.reminderproject.repository.UserRepository;
 import com.selective.reminderproject.service.MemoService;
 import com.selective.reminderproject.service.MemoTextService;
 import com.selective.reminderproject.service.UserService;
 import com.selective.reminderproject.util.KeywordAnalyzer;
 import com.selective.reminderproject.util.SecurityUtil;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +26,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class MemoController {
+    @Autowired
+    private UserRepository userRepository;
     private final UserService userService;
     private final MemoService memoService;
     private final MemoTextService memoTextService;
@@ -150,7 +155,6 @@ public class MemoController {
         Optional<String> usernameOptional = SecurityUtil.getCurrentUsername();
         if (usernameOptional.isPresent()) {
             String username = usernameOptional.get();
-            //List<MemoDTO> memos = memoService.getAllMemosByUsername(username);
             MemoDTO todayMemos = memoService.getTodayMemosByUsernameAndDate(username, year, month, day);
             if(todayMemos==null){
                 return ResponseEntity.status(400).body("오늘 메모 없음");
@@ -186,8 +190,14 @@ public class MemoController {
         Optional<String> usernameOptional = SecurityUtil.getCurrentUsername();
         if (usernameOptional.isPresent()) {
             String username = usernameOptional.get();
-            String memos = memoService.getAllMemocontentByUsername(username);
-            //System.out.println(memos);
+            Optional<User> user = userRepository.findByUsername(usernameOptional);
+            Long Id = 0L;
+            if(user.isPresent()){
+                User a =user.get();
+                Id = a.getUserId();
+            }
+            String memos = memoService.getAllMemocontentByUsername(Id);
+            System.out.println(memos);
             Map<String, Integer> keywords = KeywordAnalyzer.keywords(memos);
 
             StringBuilder sb = new StringBuilder();
@@ -198,6 +208,9 @@ public class MemoController {
             }
             String result = sb.toString();
             System.out.println(result);
+            if(result.isEmpty()){
+                return ResponseEntity.ok("분석된 키워드가 없습니다.");
+            }
 
             return ResponseEntity.ok(keywords);
         } else {
