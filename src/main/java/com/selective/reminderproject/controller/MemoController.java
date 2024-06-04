@@ -83,6 +83,7 @@ public class MemoController {
                     for (MemoTextDTO memoTextDTO2 : memoTextDTOs2) {
                         MemoText memoText = MemoText.builder()
                                 .memo(savedMemo)
+                                .icon(memoTextDTO2.getIcon())
                                 .content(memoTextDTO2.getContent())
                                 ._do(memoTextDTO2.get_do())
                                 .alarm_hour(memoTextDTO2.getAlarm_hour())
@@ -116,6 +117,7 @@ public class MemoController {
                 for (MemoTextDTO memoTextDTO : memoTextDTOs) {
                     MemoText memoText = MemoText.builder()
                             .memo(savedMemo)
+                            .icon(memoTextDTO.getIcon())
                             .content(memoTextDTO.getContent())
                             ._do(memoTextDTO.get_do())
                             .alarm_hour(memoTextDTO.getAlarm_hour())
@@ -140,6 +142,17 @@ public class MemoController {
             return ResponseEntity.ok(memos);
         } else {
             return ResponseEntity.badRequest().body("User not found");
+        }
+    }
+
+    @GetMapping("/memo/{memoId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<?> getmemobtid(@PathVariable Long memoId) {
+        MemoDTO memo = memoService.memogetbtid(memoId);
+        if (memo==null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(memo);
         }
     }
 

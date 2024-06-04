@@ -37,6 +37,12 @@ public class MemoService {
                 .collect(Collectors.toList());
     }
 
+    public MemoDTO memogetbtid(Long id){
+        Optional<Memo> memoOptional = memoRepository.findById(id);
+        return memoOptional.map(this::convertToDto)
+                .orElse(null); // 또는 다른 기본값을 지정하십시오.
+    }
+
     public List<MemoDTO> getAllMemosByUsername_by_last(Long Id, Long last) {
         List<Memo> memos=null;
         if(last<0){
@@ -119,6 +125,7 @@ public class MemoService {
                 MemoTextDTO memoTextDTO = new MemoTextDTO();
                 memoTextDTO.setMemoTextId(memoText.getMemoTextId());
                 memoTextDTO.setMemoId(memoText.getMemo().getMemoId());
+                memoTextDTO.setIcon(memoText.getIcon());
                 memoTextDTO.setContent(memoText.getContent());
                 memoTextDTO.set_do(memoText.get_do());
                 memoTextDTO.setAlarm_hour(memoText.getAlarm_hour());

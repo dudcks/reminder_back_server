@@ -7,6 +7,7 @@ import lombok.*;
 public class MemoTextDTO {
     private Long memoTextId;
     private Long memoId;
+    private int icon;
     private Boolean _do;
     private String content;
     private short alarm_hour;

@@ -20,6 +20,9 @@ public class MemoText {
     @JoinColumn(name = "memo_id",referencedColumnName = "memo_id", nullable = false)
     private Memo memo;
 
+    @Column(name="icon")
+    private int icon;
+
     @Column(name ="is_do")
     private Boolean _do;
 
