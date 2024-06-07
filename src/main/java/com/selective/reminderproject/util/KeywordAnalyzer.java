@@ -29,7 +29,7 @@ public class KeywordAnalyzer {
         // KOMORAN 초기화
 
         KomoranResult analyzeResultList = komoran.analyze(text);
-        System.out.println(analyzeResultList.getPlainText());
+        //System.out.println(analyzeResultList.getPlainText());
 
         Map<String, Integer> keywordCounts;
         keywordCounts = new HashMap<>();
