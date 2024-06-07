@@ -60,6 +60,8 @@ public class MemoService {
         StringBuilder all_text= new StringBuilder();
         int i=0;
         for(Memo memo: memos) {
+            all_text.append(memo.getFeeling());
+            all_text.append(" ");
             all_text.append(getMemoText(memo));
             all_text.append(" ");
         }

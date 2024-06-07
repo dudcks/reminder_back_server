@@ -238,6 +238,7 @@ public class MemoController {
             //System.out.println(memos);
             Map<String, Integer> keywords = KeywordAnalyzer.keywords(memos);
 
+            /*
             StringBuilder sb = new StringBuilder();
             for (Map.Entry<String, Integer> entry : keywords.entrySet()) {
                 String key = entry.getKey();
@@ -246,7 +247,8 @@ public class MemoController {
             }
             String result = sb.toString();
             //System.out.println(result);
-            if(result.isEmpty()){
+            */
+            if(keywords.isEmpty()){
                 return ResponseEntity.ok("분석된 키워드가 없습니다.");
             }
 

@@ -78,7 +78,7 @@ public class KeywordAnalyzer {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 
         // 정렬된 결과 출력
-        sortedKeywordCounts.forEach((key, value) -> System.out.println(key + ": " + value));
+        //sortedKeywordCounts.forEach((key, value) -> System.out.println(key + ": " + value));
 
 
         return sortedKeywordCounts;
